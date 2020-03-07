@@ -30,7 +30,7 @@
             IsItemClickEnabled="True"
             ItemClick="ImagesGridView_ItemClick"
             ItemsSource="{x:Bind Source, Mode=OneWay}"
-            SelectionMode="None">
+            SelectionMode="Single">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:SampleImage">
                     <Image
