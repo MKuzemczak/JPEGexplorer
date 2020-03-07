@@ -12,13 +12,14 @@ using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace JPEGexplorer.Views
 {
     public sealed partial class ImageGalleryPage : Page, INotifyPropertyChanged
     {
         public const string ImageGallerySelectedIdKey = "ImageGallerySelectedIdKey";
-        string currentlySelectedID;
+        private static int previouslySelectedItemIndex = -1;
 
         public ObservableCollection<SampleImage> Source { get; } = new ObservableCollection<SampleImage>();
 
@@ -39,30 +40,39 @@ namespace JPEGexplorer.Views
             {
                 Source.Add(item);
             }
+
+            if (previouslySelectedItemIndex >= 0 && previouslySelectedItemIndex < Source.Count)
+            {
+                imageGridView.SelectRange(new Windows.UI.Xaml.Data.ItemIndexRange(previouslySelectedItemIndex, 1));
+            }
         }
 
 
         public event EventHandler<ImageSelectedEventArgs> ImageSelected;
 
-        private void ImagesGridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var selected = e.ClickedItem as SampleImage;
 
-            // Double click open the image
-            if (selected.ID == currentlySelectedID)
+        private void ImageGridView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            var senderObject = sender as GridView;
+
+            var selected = senderObject.SelectedItem as SampleImage;
+
+            ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
+            NavigationService.Frame.SetListDataItemForNextConnectedAnimation(selected);
+            NavigationService.Navigate<ImageGalleryDetailPage>(selected.ID);
+        }
+
+        private void ImagesGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var senderObject = sender as GridView;
+
+            if (senderObject.SelectedRanges.Count == 1)
             {
-                ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
-                NavigationService.Frame.SetListDataItemForNextConnectedAnimation(selected);
-                NavigationService.Navigate<ImageGalleryDetailPage>(selected.ID);
-            }
-            else // single click shows the metadata of the image
-            {
-                
-                currentlySelectedID = selected.ID;
+                previouslySelectedItemIndex = senderObject.SelectedIndex;
+                var selected = senderObject.SelectedItem as SampleImage;
                 ImageSelected?.Invoke(this, new ImageSelectedEventArgs(selected));
             }
         }
-
         
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -78,5 +88,6 @@ namespace JPEGexplorer.Views
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
     }
 }

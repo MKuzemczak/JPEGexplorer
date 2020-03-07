@@ -23,17 +23,19 @@
             Style="{StaticResource PageTitleStyle}" />
 
         <GridView
+            x:Name="imageGridView"
             Grid.Row="1"
             Padding="{StaticResource MediumLeftRightMargin}"
             animations:Connected.ListItemElementName="thumbnailImage"
             animations:Connected.ListItemKey="galleryAnimationKey"
             IsItemClickEnabled="True"
-            ItemClick="ImagesGridView_ItemClick"
             ItemsSource="{x:Bind Source, Mode=OneWay}"
-            SelectionMode="Single">
+            SelectionMode="Extended"
+            SelectionChanged="ImagesGridView_SelectionChanged"
+            DoubleTapped="ImageGridView_DoubleTapped">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:SampleImage">
-                    <Image
+                    <Image 
                         x:Name="thumbnailImage"
                         AutomationProperties.Name="{x:Bind Name}"
                         Source="{x:Bind Source}"
