@@ -21,10 +21,11 @@
                 PanePlacement="Right">
                 
                 <SplitView.Pane>
-                    <views:MasterDetailDetailControl />
+                    <views:MasterDetailDetailControl x:Name="detailControl"/>
                 </SplitView.Pane>
                 <Grid>
-                    <views:ImageGalleryPage />
+                    <views:ImageGalleryPage
+                        ImageSelected="ImageGalleryPage_ImageSelected"/>
                 </Grid>
                 
             </SplitView>

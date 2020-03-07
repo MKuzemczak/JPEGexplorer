@@ -41,21 +41,29 @@ namespace JPEGexplorer.Views
             }
         }
 
+
+        public event EventHandler<ImageSelectedEventArgs> ImageSelected;
+
         private void ImagesGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selected = e.ClickedItem as SampleImage;
+
+            // Double click open the image
             if (selected.ID == currentlySelectedID)
             {
                 ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
                 NavigationService.Frame.SetListDataItemForNextConnectedAnimation(selected);
                 NavigationService.Navigate<ImageGalleryDetailPage>(selected.ID);
             }
-            else
+            else // single click shows the metadata of the image
             {
+                
                 currentlySelectedID = selected.ID;
+                ImageSelected?.Invoke(this, new ImageSelectedEventArgs(selected));
             }
         }
 
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)

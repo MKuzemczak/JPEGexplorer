@@ -494,7 +494,7 @@ namespace JPEGexplorer.Core.Services
                     _gallerySampleData.Add(new SampleImage()
                     {
                         ID = $"{i}",
-                        Source = $"{localResourcesPath}/SampleData/SamplePhoto{i}.png",
+                        Source = $"{localResourcesPath}/SampleData/s{i}.jpg",
                         Name = $"Image sample {i}"
                     });
                 }

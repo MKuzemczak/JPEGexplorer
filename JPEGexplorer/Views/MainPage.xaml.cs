@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 
 using Windows.UI.Xaml.Controls;
 
+using JPEGexplorer.Helpers;
+
 namespace JPEGexplorer.Views
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
@@ -15,6 +17,11 @@ namespace JPEGexplorer.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private void ImageGalleryPage_ImageSelected(object sender, ImageSelectedEventArgs e)
+        {
+            detailControl.HandleSelectedImage(e.SelectedImage);
+        }
+
         private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
         {
             if (Equals(storage, value))
@@ -24,6 +31,7 @@ namespace JPEGexplorer.Views
 
             storage = value;
             OnPropertyChanged(propertyName);
+            
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

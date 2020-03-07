@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace JPEGexplorer.Helpers
 {
+    // TODO: Based on this helper, make a helper for metadata handling
     public static class ImagesNavigationHelper
     {
         private static Dictionary<string, Stack<string>> _imageGalleriesHistories = new Dictionary<string, Stack<string>>();
