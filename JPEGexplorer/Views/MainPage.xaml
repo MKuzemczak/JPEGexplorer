@@ -5,20 +5,29 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource PageStyle}"
+    xmlns:models="using:JPEGexplorer.Core.Models"
+    xmlns:views="using:JPEGexplorer.Views"
     mc:Ignorable="d">
     <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
+        
         <TextBlock
-            Grid.Row="0"
             x:Uid="Main_Title"
-            Style="{StaticResource PageTitleStyle}" />
+            Style="{StaticResource PageTitleStyle}"/>
         <Grid
-            Grid.Row="1" 
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <SplitView IsPaneOpen="True"
+                DisplayMode="Inline"
+                OpenPaneLength="600"
+                PanePlacement="Right">
+                
+                <SplitView.Pane>
+                    <views:MasterDetailDetailControl />
+                </SplitView.Pane>
+                <Grid>
+                    <views:ImageGalleryPage />
+                </Grid>
+                
+            </SplitView>
             <!--
                 The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
                 Place your content here.

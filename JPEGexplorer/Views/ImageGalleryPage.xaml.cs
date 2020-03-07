@@ -18,6 +18,7 @@ namespace JPEGexplorer.Views
     public sealed partial class ImageGalleryPage : Page, INotifyPropertyChanged
     {
         public const string ImageGallerySelectedIdKey = "ImageGallerySelectedIdKey";
+        string currentlySelectedID;
 
         public ObservableCollection<SampleImage> Source { get; } = new ObservableCollection<SampleImage>();
 
@@ -43,9 +44,16 @@ namespace JPEGexplorer.Views
         private void ImagesGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selected = e.ClickedItem as SampleImage;
-            ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
-            NavigationService.Frame.SetListDataItemForNextConnectedAnimation(selected);
-            NavigationService.Navigate<ImageGalleryDetailPage>(selected.ID);
+            if (selected.ID == currentlySelectedID)
+            {
+                ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
+                NavigationService.Frame.SetListDataItemForNextConnectedAnimation(selected);
+                NavigationService.Navigate<ImageGalleryDetailPage>(selected.ID);
+            }
+            else
+            {
+                currentlySelectedID = selected.ID;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -38,7 +38,8 @@
                         AutomationProperties.Name="{x:Bind Name}"
                         Source="{x:Bind Source}"
                         Style="{StaticResource ThumbnailImageStyle}"
-                        ToolTipService.ToolTip="{x:Bind Name}" />
+                        ToolTipService.ToolTip="{x:Bind Name}" >
+                    </Image>
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>

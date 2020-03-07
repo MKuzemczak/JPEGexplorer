@@ -157,8 +157,12 @@
     <value>MasterDetail</value>
     <comment>Menu item text for MasterDetail</comment>
   </data>
+  <data name="MetadataPage_Title.Text" xml:space="preserve">
+    <value>Metadata</value>
+    <comment>Page title for ImageGalleryPage</comment>
+  </data>
   <data name="ImageGallery_Title.Text" xml:space="preserve">
-    <value>ImageGallery</value>
+    <value>Images</value>
     <comment>Page title for ImageGalleryPage</comment>
   </data>
   <data name="ShellMenuItem_Views_ImageGallery.Text" xml:space="preserve">
