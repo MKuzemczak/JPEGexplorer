@@ -26,7 +26,6 @@
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
-        <Button name="button1"></Button>
         <Button
             x:Name="closeButton"
             VerticalAlignment="Top"
