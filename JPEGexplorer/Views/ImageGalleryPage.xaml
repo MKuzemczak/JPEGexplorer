@@ -29,8 +29,21 @@
             animations:Connected.ListItemElementName="thumbnailImage"
             animations:Connected.ListItemKey="galleryAnimationKey"
             IsItemClickEnabled="True"
+            ItemsSource="{x:Bind Source, Mode=OneWay}"
             SelectionMode="Extended"
             SelectionChanged="ImagesGridView_SelectionChanged"
-            DoubleTapped="ImageGridView_DoubleTapped"/>
+            DoubleTapped="ImageGridView_DoubleTapped">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="models:SampleImage">
+                    <Image 
+                        x:Name="thumbnailImage"
+                        AutomationProperties.Name="{x:Bind Name}"
+                        Source="{x:Bind Source}"
+                        Style="{StaticResource ThumbnailImageStyle}"
+                        ToolTipService.ToolTip="{x:Bind Name}" >
+                    </Image>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
     </Grid>
 </Page>
