@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 using JPEGexplorer.Core.Models;
+using JPEGexplorer.Models;
+using JPEGexplorer.Services;
 
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -35,10 +40,42 @@ namespace JPEGexplorer.Views
             InitializeComponent();
         }
 
-        public void HandleSelectedImage(SampleImage i)
+        public async Task HandleSelectedImage(SampleImage i)
         {
             SourceImage = i;
-            shipToTextBlock.Text = "hehe";
+
+            block.Children.Clear();
+
+            List<Segment> segments = new List<Segment>();
+
+            try
+            {
+                segments = await JPEGAnalyzerService.GetFileSegmentsAsync(i.Source);
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"Excepion thrown while reading file segments: {e}");
+            }
+
+            foreach (Segment s in segments)
+            {
+                TextBlock title = new TextBlock
+                {
+                    Text = s.Name,
+                    Style = (Style)Application.Current.Resources["DetailSubTitleStyle"],
+                    Margin = (Thickness)Application.Current.Resources["SmallTopMargin"]
+                };
+                block.Children.Add(title);
+
+                TextBlock content = new TextBlock
+                {
+                    Text = "Length: " + s.Length.ToString(),
+                    Style = (Style)Application.Current.Resources["DetailBodyBaseMediumStyle"]
+                };
+                block.Children.Add(content);
+            }
+
+            //shipToTextBlock.Text = "hehe";
         }
 
         private static void OnSourceImagePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

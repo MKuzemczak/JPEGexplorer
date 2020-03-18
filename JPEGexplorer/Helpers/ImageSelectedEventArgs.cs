@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using JPEGexplorer.Core.Models;
+using JPEGexplorer.Models;
 
 namespace JPEGexplorer.Helpers
 {

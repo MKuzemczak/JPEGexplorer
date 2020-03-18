@@ -131,6 +131,9 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
     </PackageReference>
+    <PackageReference Include="System.IO.Packaging">
+      <Version>4.7.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-us\Resources.resw" />
@@ -142,10 +145,14 @@
     <Compile Include="Helpers\MenuNavigationHelper.cs" />
     <Compile Include="Helpers\MetadataManagementHelper.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
+    <Compile Include="Models\SampleImage.cs" />
+    <Compile Include="Models\Segment.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Activation\DefaultActivationHandler.cs" />
+    <Compile Include="Services\JPEGAnalyzerService.cs" />
     <Compile Include="Services\MetadataExtractorService.cs" />
     <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="Services\SampleDataService.cs" />
     <Compile Include="Services\ThemeSelectorService.cs" />
     <Compile Include="Services\ViewLifetimeControl.cs" />
     <Compile Include="Services\WindowManagerService.cs" />

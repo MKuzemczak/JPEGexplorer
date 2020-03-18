@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 using JPEGexplorer.Core.Models;
-using JPEGexplorer.Core.Services;
+using JPEGexplorer.Services;
 
 using Microsoft.Toolkit.Uwp.UI.Controls;
 

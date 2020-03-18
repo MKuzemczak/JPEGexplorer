@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using JPEGexplorer.Core.Models;
+using JPEGexplorer.Models;
 
-namespace JPEGexplorer.Core.Services
+namespace JPEGexplorer.Services
 {
     // This class holds sample data used by some generated pages to show how they can be used.
     // TODO WTS: Delete this file once your app is using real data.

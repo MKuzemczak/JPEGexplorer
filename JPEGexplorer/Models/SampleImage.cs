@@ -1,4 +1,4 @@
-﻿namespace JPEGexplorer.Core.Models
+﻿namespace JPEGexplorer.Models
 {
     public class SampleImage
     {

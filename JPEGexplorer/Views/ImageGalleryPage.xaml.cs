@@ -2,11 +2,11 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
-using JPEGexplorer.Core.Models;
-using JPEGexplorer.Core.Services;
-using JPEGexplorer.Helpers;
+using JPEGexplorer.Models;
 using JPEGexplorer.Services;
+using JPEGexplorer.Helpers;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
@@ -47,8 +47,9 @@ namespace JPEGexplorer.Views
         }
 
 
-        public event EventHandler<ImageSelectedEventArgs> ImageSelected;
-
+        // public event EventHandler<ImageSelectedEventArgs> ImageSelected;
+        public delegate Task ImageSelectedEventHandler(object sender, ImageSelectedEventArgs e);
+        public event ImageSelectedEventHandler ImageSelected;
 
         private void ImageGridView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {

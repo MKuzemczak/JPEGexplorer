@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-using JPEGexplorer.Core.Models;
-using JPEGexplorer.Core.Services;
+using JPEGexplorer.Models;
+using JPEGexplorer.Services;
 using JPEGexplorer.Helpers;
 using JPEGexplorer.Services;
 

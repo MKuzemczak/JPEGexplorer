@@ -24,7 +24,7 @@
             HorizontalAlignment="Stretch"
             VerticalScrollMode="Enabled">
             <StackPanel Name="block" Padding="0,15,0,0">
-                <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Image ID" />
+                <!--<TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Image ID" />
                 <TextBlock
                     Style="{StaticResource DetailBodyBaseMediumStyle}"
                     Text="{x:Bind SourceImage.ID, Mode=OneWay}" />
@@ -60,7 +60,7 @@
                 <TextBlock
                     Style="{StaticResource DetailBodyBaseMediumStyle}"
                     Margin="{StaticResource MediumBottomMargin}"
-                    Text="{x:Bind MasterMenuItem.OrderTotal, Mode=OneWay}" />
+                    Text="{x:Bind MasterMenuItem.OrderTotal, Mode=OneWay}" />-->
             </StackPanel>
         </ScrollViewer>
     </Grid>

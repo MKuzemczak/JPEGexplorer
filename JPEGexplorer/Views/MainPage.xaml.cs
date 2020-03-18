@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+
 
 using Windows.UI.Xaml.Controls;
 
@@ -17,9 +19,9 @@ namespace JPEGexplorer.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void ImageGalleryPage_ImageSelected(object sender, ImageSelectedEventArgs e)
+        private async Task ImageGalleryPage_ImageSelected(object sender, ImageSelectedEventArgs e)
         {
-            detailControl.HandleSelectedImage(e.SelectedImage);
+            await detailControl.HandleSelectedImage(e.SelectedImage);
         }
 
         private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
