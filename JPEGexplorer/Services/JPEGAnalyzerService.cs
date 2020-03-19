@@ -16,9 +16,9 @@ namespace JPEGexplorer.Services
     {
         
 
-        public static async Task<List<Segment>> GetFileSegmentsAsync(string path)
+        public static async Task<JPEGByteFile> GetFileSegmentsAsync(string path)
         {
-            List<Segment> ret = new List<Segment>();
+            List<Segment> segments = new List<Segment>();
 
             byte[] fileBytes = new byte[] { };
 
@@ -35,13 +35,15 @@ namespace JPEGexplorer.Services
             }
 
             if (!fileReadSucceeded)
-                return ret;
+            {
+                throw new IOException();
+            }
 
-
-            byte a = fileBytes[0];
-            byte b = fileBytes[1];
-            byte c = fileBytes[fileBytes.Length - 2];
-            byte d = fileBytes.Last();
+            JPEGByteFile ret = new JPEGByteFile()
+            {
+                Path = path,
+                FileBytes = fileBytes
+            };
 
             if (fileBytes[0] != 0xFF ||
                 fileBytes[1] != 0xD8 )
@@ -64,11 +66,11 @@ namespace JPEGexplorer.Services
                     break;
                 }
 
+                Segment segment = new Segment()
+                {
+                    SegmentStartFileIndex = cntr - 1
+                };
 
-                while (fileBytes[cntr] == 0x00)
-                    cntr++;
-
-                Segment segment = new Segment();
                 Int32 segmentDataLength = 0;
 
                 try
@@ -92,21 +94,20 @@ namespace JPEGexplorer.Services
                     }
 
                     segment.Length = compressedImageSegmentLength - 1;
-                    ret.Add(segment);
+                    segment.ExcessBytesAfterSegment = effectiveLength - cntr - 2; // two bytes for the 0xFFD9 EOI marker
+                    segments.Add(segment);
 
                     break;
                 }
-                cntr++;
 
-                //while (fileBytes[cntr] == 0x00)
-                //    cntr++;
+                cntr++;
 
                 try
                 {
                     byte[] lengthBytes = (byte[])fileBytes.Skip(cntr).Take(2).ToArray();
                     if (BitConverter.IsLittleEndian)
                         Array.Reverse(lengthBytes);
-                    segmentDataLength = (Int32)BitConverter.ToInt16(lengthBytes, 0);
+                    segmentDataLength = (Int32)BitConverter.ToUInt16(lengthBytes, 0);
                 }
                 catch (Exception e)
                 {
@@ -116,9 +117,6 @@ namespace JPEGexplorer.Services
 
                 segment.Length = segmentDataLength;
                 cntr += 2;
-
-                //while (fileBytes[cntr] == 0x00)
-                //    cntr++;
 
                 try
                 {
@@ -132,20 +130,24 @@ namespace JPEGexplorer.Services
                 }
 
                 cntr += segmentDataLength - 2; // without the two length bytes which were already added to cntr
-
-                ret.Add(segment);
-
+                segment.SegmentEndFileIndex = cntr;
                 int excessCntr = 0;
-                while (cntr + excessCntr < effectiveLength && !(fileBytes[cntr + excessCntr] == 0xFF && SegmentNameDictionary.ContainsKey(fileBytes[cntr + excessCntr + 1])))
+
+                while (cntr + excessCntr + 1 < effectiveLength && !(fileBytes[cntr + excessCntr] == 0xFF && SegmentNameDictionary.ContainsKey(fileBytes[cntr + excessCntr + 1])))
                     excessCntr++;
 
                 cntr += excessCntr;
+                segment.ExcessBytesAfterSegment = excessCntr;
+
+                segments.Add(segment);
             }
+
+            ret.Segments = segments;
 
             return ret;
         }
 
-        public static async Task<List<Segment>> GetFileSegmentsAsync(SampleImage image)
+        public static async Task<JPEGByteFile> GetFileSegmentsAsync(SampleImage image)
         {
             return await GetFileSegmentsAsync(image.Source);
         }

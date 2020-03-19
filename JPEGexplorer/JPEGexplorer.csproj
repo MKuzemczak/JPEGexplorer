@@ -145,6 +145,7 @@
     <Compile Include="Helpers\MenuNavigationHelper.cs" />
     <Compile Include="Helpers\MetadataManagementHelper.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
+    <Compile Include="Models\JPEGByteFile.cs" />
     <Compile Include="Models\SampleImage.cs" />
     <Compile Include="Models\Segment.cs" />
     <Compile Include="Services\ActivationService.cs" />

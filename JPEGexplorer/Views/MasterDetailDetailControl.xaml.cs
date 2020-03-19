@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -35,6 +36,8 @@ namespace JPEGexplorer.Views
             typeof(MasterDetailDetailControl),
             new PropertyMetadata(null, OnMasterMenuItemPropertyChanged));
 
+        public JPEGByteFile SourceByteFile { get; set; }
+
         public MasterDetailDetailControl()
         {
             InitializeComponent();
@@ -46,18 +49,20 @@ namespace JPEGexplorer.Views
 
             block.Children.Clear();
 
-            List<Segment> segments = new List<Segment>();
+            SourceByteFile = new JPEGByteFile();
 
             try
             {
-                segments = await JPEGAnalyzerService.GetFileSegmentsAsync(i.Source);
+                SourceByteFile = await JPEGAnalyzerService.GetFileSegmentsAsync(i.Source);
             }
             catch (IOException e)
             {
                 Console.WriteLine($"Excepion thrown while reading file segments: {e}");
             }
 
-            foreach (Segment s in segments)
+
+            int segmentCntr = 0;
+            foreach (Segment s in SourceByteFile.Segments)
             {
                 TextBlock title = new TextBlock
                 {
@@ -69,13 +74,33 @@ namespace JPEGexplorer.Views
 
                 TextBlock content = new TextBlock
                 {
-                    Text = "Length: " + s.Length.ToString(),
+                    Text = "Length: " + s.Length.ToString() + " B, Excess bytes after segment: " + s.ExcessBytesAfterSegment.ToString() + " B",
                     Style = (Style)Application.Current.Resources["DetailBodyBaseMediumStyle"]
                 };
                 block.Children.Add(content);
+
+                Button removeSegmentButton = new Button()
+                {
+                    Content = "Remove segment",
+                    Tag = "BTN-" + segmentCntr
+                };
+
+                removeSegmentButton.Click += RemoveSegmentButton_Click;
+                block.Children.Add(removeSegmentButton);
+                segmentCntr++;
             }
 
             //shipToTextBlock.Text = "hehe";
+        }
+
+        private async void RemoveSegmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            int index = int.Parse(((sender as Button).Tag as string).Split('-').Last());
+
+            SourceByteFile.RemoveSegment(index);
+            string path = SourceByteFile.Path;
+            SourceByteFile.Path = path.Substring(0, path.LastIndexOf("/") + 1) + "tmp.jpg";
+            await SourceByteFile.SaveFile();
         }
 
         private static void OnSourceImagePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
