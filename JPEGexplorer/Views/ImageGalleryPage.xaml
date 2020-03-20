@@ -34,14 +34,13 @@
             SelectionChanged="ImagesGridView_SelectionChanged"
             DoubleTapped="ImageGridView_DoubleTapped">
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="models:SampleImage">
-                    <Image 
+                <DataTemplate x:DataType="models:ImageItem">
+                    <Image
                         x:Name="thumbnailImage"
-                        AutomationProperties.Name="{x:Bind Name}"
-                        Source="{x:Bind Source}"
+                        AutomationProperties.Name="{x:Bind Filename}"
+                        Source="{x:Bind ImageData}"
                         Style="{StaticResource ThumbnailImageStyle}"
-                        ToolTipService.ToolTip="{x:Bind Name}" >
-                    </Image>
+                        ToolTipService.ToolTip="{x:Bind Filename}" />
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>

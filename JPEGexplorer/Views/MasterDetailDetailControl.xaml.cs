@@ -15,9 +15,9 @@ namespace JPEGexplorer.Views
 {
     public sealed partial class MasterDetailDetailControl : UserControl
     {
-        public SampleImage SourceImage
+        public ImageItem SourceImage
         {
-            get { return GetValue(SourceImageProperty) as SampleImage; }
+            get { return GetValue(SourceImageProperty) as ImageItem; }
             set { SetValue(SourceImageProperty, value); }
         }
 
@@ -43,23 +43,37 @@ namespace JPEGexplorer.Views
             InitializeComponent();
         }
 
-        public async Task HandleSelectedImage(SampleImage i)
+        // Delete all except the save button
+        private void ClearBlockChildren()
+        {
+            object o = block.Children[0];
+            block.Children.Clear();
+            block.Children.Add(o as UIElement);
+        }
+
+        public async Task HandleSelectedImage(ImageItem i)
         {
             SourceImage = i;
 
-            block.Children.Clear();
-
-            SourceByteFile = new JPEGByteFile();
+            JPEGByteFile file = new JPEGByteFile();
 
             try
             {
-                SourceByteFile = await JPEGAnalyzerService.GetFileSegmentsAsync(i.Source);
+                file = await JPEGAnalyzerService.GetFileSegmentsAsync(i.File);
             }
             catch (IOException e)
             {
                 Console.WriteLine($"Excepion thrown while reading file segments: {e}");
             }
 
+            UpdateDisplayedMetadataSegments(file);
+        }
+
+        public void UpdateDisplayedMetadataSegments(JPEGByteFile file)
+        {
+            SourceByteFile = file;
+
+            ClearBlockChildren();
 
             int segmentCntr = 0;
             foreach (Segment s in SourceByteFile.Segments)
@@ -79,28 +93,29 @@ namespace JPEGexplorer.Views
                 };
                 block.Children.Add(content);
 
-                Button removeSegmentButton = new Button()
+                if (s.Removable)
                 {
-                    Content = "Remove segment",
-                    Tag = "BTN-" + segmentCntr
-                };
+                    Button removeSegmentButton = new Button()
+                    {
+                        Content = "Remove segment",
+                        Tag = "BTN-" + segmentCntr
+                    };
 
-                removeSegmentButton.Click += RemoveSegmentButton_Click;
-                block.Children.Add(removeSegmentButton);
+                    removeSegmentButton.Click += RemoveSegmentButton_Click;
+                    block.Children.Add(removeSegmentButton);
+                }
+
                 segmentCntr++;
             }
-
-            //shipToTextBlock.Text = "hehe";
         }
 
-        private async void RemoveSegmentButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveSegmentButton_Click(object sender, RoutedEventArgs e)
         {
             int index = int.Parse(((sender as Button).Tag as string).Split('-').Last());
 
             SourceByteFile.RemoveSegment(index);
-            string path = SourceByteFile.Path;
-            SourceByteFile.Path = path.Substring(0, path.LastIndexOf("/") + 1) + "tmp.jpg";
-            await SourceByteFile.SaveFile();
+            UpdateDisplayedMetadataSegments(SourceByteFile);
+            //await SourceByteFile.SaveFile();
         }
 
         private static void OnSourceImagePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -114,6 +129,20 @@ namespace JPEGexplorer.Views
             var control = d as MasterDetailDetailControl;
             control.ForegroundElement.ChangeView(0, 0, 1);
             
+        }
+
+        private async void SaveChangesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SourceByteFile != null && SourceByteFile.Modified)
+            {
+                await SourceByteFile.SaveFile();
+            }
+        }
+
+        private void UndoLastChangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SourceByteFile?.UndoLastSegmentRemoval();
+            UpdateDisplayedMetadataSegments(SourceByteFile);
         }
     }
 }

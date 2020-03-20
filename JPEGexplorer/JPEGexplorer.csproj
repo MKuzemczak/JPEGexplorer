@@ -145,11 +145,17 @@
     <Compile Include="Helpers\MenuNavigationHelper.cs" />
     <Compile Include="Helpers\MetadataManagementHelper.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
+    <Compile Include="Models\ImageDataSource.cs" />
+    <Compile Include="Models\ImageItem.cs" />
+    <Compile Include="Models\ItemCacheManager.cs" />
+    <Compile Include="Models\ItemIndexRangeExtensions.cs" />
+    <Compile Include="Models\ItemIndexRangeList.cs" />
     <Compile Include="Models\JPEGByteFile.cs" />
     <Compile Include="Models\SampleImage.cs" />
     <Compile Include="Models\Segment.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Activation\DefaultActivationHandler.cs" />
+    <Compile Include="Services\ImageLoaderService.cs" />
     <Compile Include="Services\JPEGAnalyzerService.cs" />
     <Compile Include="Services\MetadataExtractorService.cs" />
     <Compile Include="Services\NavigationService.cs" />

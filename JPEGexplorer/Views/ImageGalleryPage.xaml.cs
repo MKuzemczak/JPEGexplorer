@@ -10,6 +10,7 @@ using JPEGexplorer.Helpers;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -31,13 +32,25 @@ namespace JPEGexplorer.Views
 
         private async void ImageGalleryPage_OnLoaded(object sender, RoutedEventArgs e)
         {
-            Source.Clear();
+            //StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures).AsTask().GetAwaiter().GetResult().SaveFolder;
+            //Source.Clear();
 
-            var data = await SampleDataService.GetImageGalleryDataAsync("ms-appx:///Assets");
+            //var data = await SampleDataService.GetImageGalleryDataAsync("ms-appx:///Assets");
 
-            foreach (var item in data)
+            //foreach (var item in data)
+            //{
+            //    Source.Add(item);
+            //}
+
+            //if (previouslySelectedItemIndex >= 0 && previouslySelectedItemIndex < Source.Count)
+            //{
+            //    imageGridView.SelectRange(new Windows.UI.Xaml.Data.ItemIndexRange(previouslySelectedItemIndex, 1));
+            //}
+            var data = await ImageLoaderService.GetImageGalleryDataAsync((await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures)).SaveFolder);
+
+            if (data != null)
             {
-                Source.Add(item);
+                imageGridView.ItemsSource = data;
             }
 
             if (previouslySelectedItemIndex >= 0 && previouslySelectedItemIndex < Source.Count)
@@ -55,11 +68,11 @@ namespace JPEGexplorer.Views
         {
             var senderObject = sender as GridView;
 
-            var selected = senderObject.SelectedItem as SampleImage;
+            var selected = senderObject.SelectedItem as ImageItem;
 
-            ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
+            //ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
             NavigationService.Frame.SetListDataItemForNextConnectedAnimation(selected);
-            NavigationService.Navigate<ImageGalleryDetailPage>(selected.ID);
+            NavigationService.Navigate<ImageGalleryDetailPage>(selected);
         }
 
         private void ImagesGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -69,7 +82,7 @@ namespace JPEGexplorer.Views
             if (senderObject.SelectedRanges.Count == 1)
             {
                 previouslySelectedItemIndex = senderObject.SelectedIndex;
-                var selected = senderObject.SelectedItem as SampleImage;
+                var selected = senderObject.SelectedItem as ImageItem;
                 ImageSelected?.Invoke(this, new ImageSelectedEventArgs(selected));
             }
         }

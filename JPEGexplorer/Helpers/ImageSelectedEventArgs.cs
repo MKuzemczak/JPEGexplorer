@@ -10,7 +10,7 @@ namespace JPEGexplorer.Helpers
 {
     public class ImageSelectedEventArgs : EventArgs
     {
-        public ImageSelectedEventArgs(SampleImage s) { SelectedImage = s; }
-        public SampleImage SelectedImage { get; }
+        public ImageSelectedEventArgs(ImageItem s) { SelectedImage = s; }
+        public ImageItem SelectedImage { get; }
     }
 }

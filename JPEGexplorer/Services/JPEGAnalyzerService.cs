@@ -6,9 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage;
 
 using JPEGexplorer.Models;
+using Windows.Storage.Streams;
 
 namespace JPEGexplorer.Services
 {
@@ -16,17 +18,32 @@ namespace JPEGexplorer.Services
     {
         
 
-        public static async Task<JPEGByteFile> GetFileSegmentsAsync(string path)
+        public static async Task<JPEGByteFile> GetFileSegmentsAsync(StorageFile file)
         {
             List<Segment> segments = new List<Segment>();
 
             byte[] fileBytes = new byte[] { };
 
             bool fileReadSucceeded = true;
-            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(path));
+
+            // TODO: delet dis
+            //StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(path));
             try
             {
-                fileBytes = File.ReadAllBytes(file.Path);
+                //fileBytes = await File.ReadAllBytesAsync(file.Path);
+
+                //using (Stream stream = await file.OpenStreamForReadAsync())
+                //{
+                //    using (var memoryStream = new MemoryStream())
+                //    {
+
+                //        stream.CopyTo(memoryStream);
+                //        fileBytes = memoryStream.ToArray();
+                //    }
+                //}
+
+                IBuffer buffer = await FileIO.ReadBufferAsync(file);
+                fileBytes = buffer.ToArray();
             }
             catch (Exception e)
             {
@@ -41,7 +58,7 @@ namespace JPEGexplorer.Services
 
             JPEGByteFile ret = new JPEGByteFile()
             {
-                Path = path,
+                File = file,
                 FileBytes = fileBytes
             };
 
@@ -68,7 +85,7 @@ namespace JPEGexplorer.Services
 
                 Segment segment = new Segment()
                 {
-                    SegmentStartFileIndex = cntr - 1
+                    SegmentStartByteIndexInFile = cntr - 1
                 };
 
                 Int32 segmentDataLength = 0;
@@ -83,6 +100,11 @@ namespace JPEGexplorer.Services
                     throw new FileFormatException();
                 }
 
+                if (RemovableSegments.Contains(fileBytes[cntr]))
+                {
+                    segment.Removable = true;
+                }
+
                 if (fileBytes[cntr] == 0xDA) // case there's only SOS segment left (it doesn't include segment length, so it needs special treatment)
                 {
                     int compressedImageSegmentLength = 0;
@@ -95,6 +117,7 @@ namespace JPEGexplorer.Services
 
                     segment.Length = compressedImageSegmentLength - 1;
                     segment.ExcessBytesAfterSegment = effectiveLength - cntr - 2; // two bytes for the 0xFFD9 EOI marker
+                    segment.SegmentIndexInFile = segments.Count;
                     segments.Add(segment);
 
                     break;
@@ -120,8 +143,10 @@ namespace JPEGexplorer.Services
 
                 try
                 {
-                    //segment.Content = BitConverter.ToString(fileBytes, cntr, segmentDataLength - 2);
-                    segment.Content = "";
+                    // TODO: delet dis
+                    // segment.Content = BitConverter.ToString(fileBytes, cntr, segmentDataLength - 2);
+                    // segment.Content = "";
+                    segment.Content = fileBytes.Skip(cntr - 4).Take(segmentDataLength + 2).ToArray();
                 }
                 catch (Exception e)
                 {
@@ -130,7 +155,7 @@ namespace JPEGexplorer.Services
                 }
 
                 cntr += segmentDataLength - 2; // without the two length bytes which were already added to cntr
-                segment.SegmentEndFileIndex = cntr;
+                segment.SegmentEndByteIndexInFile = cntr;
                 int excessCntr = 0;
 
                 while (cntr + excessCntr + 1 < effectiveLength && !(fileBytes[cntr + excessCntr] == 0xFF && SegmentNameDictionary.ContainsKey(fileBytes[cntr + excessCntr + 1])))
@@ -138,7 +163,7 @@ namespace JPEGexplorer.Services
 
                 cntr += excessCntr;
                 segment.ExcessBytesAfterSegment = excessCntr;
-
+                segment.SegmentIndexInFile = segments.Count;
                 segments.Add(segment);
             }
 
@@ -147,9 +172,9 @@ namespace JPEGexplorer.Services
             return ret;
         }
 
-        public static async Task<JPEGByteFile> GetFileSegmentsAsync(SampleImage image)
+        public static async Task<JPEGByteFile> GetFileSegmentsAsync(ImageItem image)
         {
-            return await GetFileSegmentsAsync(image.Source);
+            return await GetFileSegmentsAsync(image.File);
         }
 
         public static Dictionary<byte, string> SegmentNameDictionary = new Dictionary<byte, string>()
@@ -218,5 +243,12 @@ namespace JPEGexplorer.Services
             {0xFD, "JPG13 - JPEG Extension 13"},
             {0xFE, "COM	Comment"}
         };
+
+        public static HashSet<byte> RemovableSegments = new HashSet<byte>()
+        {
+            0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
+            0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE
+        };
+
     }
 }

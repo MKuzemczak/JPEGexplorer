@@ -24,43 +24,10 @@
             HorizontalAlignment="Stretch"
             VerticalScrollMode="Enabled">
             <StackPanel Name="block" Padding="0,15,0,0">
-                <!--<TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Image ID" />
-                <TextBlock
-                    Style="{StaticResource DetailBodyBaseMediumStyle}"
-                    Text="{x:Bind SourceImage.ID, Mode=OneWay}" />
-
-                <TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Image Name" />
-                <TextBlock
-                    Style="{StaticResource DetailBodyBaseMediumStyle}"
-                    Text="{x:Bind SourceImage.Name, Mode=OneWay}" />
-
-                <TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Image Source" />
-                <TextBlock
-                    Style="{StaticResource DetailBodyBaseMediumStyle}"
-                    Text="{x:Bind SourceImage.Source, Mode=OneWay}" />
-    
-                <TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Ship to" />
-                <TextBlock
-                    x:Name="shipToTextBlock"
-                    Style="{StaticResource DetailBodyBaseMediumStyle}"/>
-
-                <TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Order total" />
-                <TextBlock
-                    Style="{StaticResource DetailBodyBaseMediumStyle}"
-                    Margin="{StaticResource MediumBottomMargin}"
-                    Text="{x:Bind MasterMenuItem.OrderTotal, Mode=OneWay}" />-->
+                <StackPanel Orientation="Horizontal" Spacing="20">
+                    <Button x:Name="saveChangesButton" Content="Save changes" Click="SaveChangesButton_Click"/>
+                    <Button x:Name="undoLastChangeButton" Content="Undo" Click="UndoLastChangeButton_Click"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
