@@ -26,22 +26,8 @@ namespace JPEGexplorer.Services
 
             bool fileReadSucceeded = true;
 
-            // TODO: delet dis
-            //StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(path));
             try
             {
-                //fileBytes = await File.ReadAllBytesAsync(file.Path);
-
-                //using (Stream stream = await file.OpenStreamForReadAsync())
-                //{
-                //    using (var memoryStream = new MemoryStream())
-                //    {
-
-                //        stream.CopyTo(memoryStream);
-                //        fileBytes = memoryStream.ToArray();
-                //    }
-                //}
-
                 IBuffer buffer = await FileIO.ReadBufferAsync(file);
                 fileBytes = buffer.ToArray();
             }
@@ -118,6 +104,7 @@ namespace JPEGexplorer.Services
                     segment.Length = compressedImageSegmentLength - 1;
                     segment.ExcessBytesAfterSegment = effectiveLength - cntr - 2; // two bytes for the 0xFFD9 EOI marker
                     segment.SegmentIndexInFile = segments.Count;
+                    segment.SegmentEndByteIndexInFile = cntr + 2;
                     segments.Add(segment);
 
                     break;
@@ -143,9 +130,6 @@ namespace JPEGexplorer.Services
 
                 try
                 {
-                    // TODO: delet dis
-                    // segment.Content = BitConverter.ToString(fileBytes, cntr, segmentDataLength - 2);
-                    // segment.Content = "";
                     segment.Content = fileBytes.Skip(cntr - 4).Take(segmentDataLength + 2).ToArray();
                 }
                 catch (Exception e)

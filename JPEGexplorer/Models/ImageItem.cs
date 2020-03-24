@@ -30,7 +30,7 @@ namespace JPEGexplorer.Models
 
         public Options ViewMode;
 
-        public async Task ToImage()
+        public async Task ToImageAsync()
         {
             if (File == null)
                 return;
@@ -45,7 +45,7 @@ namespace JPEGexplorer.Models
             ViewMode = Options.Image;
         }
 
-        public async Task ToThumbnail()
+        public async Task ToThumbnailAsync()
         {
             if (File == null)
                 return;

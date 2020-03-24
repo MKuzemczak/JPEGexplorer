@@ -93,6 +93,22 @@ namespace JPEGexplorer.Views
                 };
                 block.Children.Add(content);
 
+                StackPanel buttons = new StackPanel();
+                buttons.Orientation = Orientation.Horizontal;
+                buttons.Spacing = 20;
+
+                if (s.ExcessBytesAfterSegment > 0)
+                {
+                    Button removeExcessBytesAfterSegmentButton = new Button()
+                    {
+                        Content = "Remove excess bytes",
+                        Tag = "BTN-" + segmentCntr
+                    };
+
+                    removeExcessBytesAfterSegmentButton.Click += RemoveExcessBytesAfterSegmentButton_Click;
+                    buttons.Children.Add(removeExcessBytesAfterSegmentButton);
+                }
+
                 if (s.Removable)
                 {
                     Button removeSegmentButton = new Button()
@@ -102,7 +118,12 @@ namespace JPEGexplorer.Views
                     };
 
                     removeSegmentButton.Click += RemoveSegmentButton_Click;
-                    block.Children.Add(removeSegmentButton);
+                    buttons.Children.Add(removeSegmentButton);
+                }
+
+                if (buttons.Children.Count > 0)
+                {
+                    block.Children.Add(buttons);
                 }
 
                 segmentCntr++;
@@ -115,7 +136,14 @@ namespace JPEGexplorer.Views
 
             SourceByteFile.RemoveSegment(index);
             UpdateDisplayedMetadataSegments(SourceByteFile);
-            //await SourceByteFile.SaveFile();
+        }
+
+        private void RemoveExcessBytesAfterSegmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            int index = int.Parse(((sender as Button).Tag as string).Split('-').Last());
+
+            SourceByteFile.RemoveExcessBytesAfterSegment(index);
+            UpdateDisplayedMetadataSegments(SourceByteFile);
         }
 
         private static void OnSourceImagePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -141,7 +169,7 @@ namespace JPEGexplorer.Views
 
         private void UndoLastChangeButton_Click(object sender, RoutedEventArgs e)
         {
-            SourceByteFile?.UndoLastSegmentRemoval();
+            SourceByteFile?.UndoLastChange();
             UpdateDisplayedMetadataSegments(SourceByteFile);
         }
     }

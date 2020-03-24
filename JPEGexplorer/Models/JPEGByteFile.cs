@@ -17,13 +17,29 @@ namespace JPEGexplorer.Models
 
         public List<Segment> Segments = new List<Segment>();
 
-        public List<Segment> DeletedSegments = new List<Segment>();
+        private List<Segment> RemovedSegments = new List<Segment>();
+
+        private List<Change> ChangesHistory = new List<Change>();
 
         public bool Modified = false;
 
+        class Change
+        {
+            public Action UndoAction;
+            public ChangeType TypeOfChange;
+        }
+
+        private enum ChangeType
+        {
+            SegmentRemoval,
+            ExcessBytesRemoval
+        };
+
+
         public async Task SaveFile()
         {
-            await FileIO.WriteBytesAsync(File, FileBytes);
+            if (Modified)
+                await FileIO.WriteBytesAsync(File, FileBytes);
         }
 
         public void RemoveSegment(int index)
@@ -31,19 +47,19 @@ namespace JPEGexplorer.Models
             if (index > Segments.Count)
                 return;
 
-            byte[] start = FileBytes.Take(Segments[index].SegmentStartByteIndexInFile).ToArray();
-            byte[] end = FileBytes.Skip(Segments[index].SegmentEndByteIndexInFile).ToArray();
+            byte[] BytesBeforeSegment = FileBytes.Take(Segments[index].SegmentStartByteIndexInFile).ToArray();
+            byte[] BytesAfterSegment = FileBytes.Skip(Segments[index].SegmentEndByteIndexInFile).ToArray();
 
-            byte[] tmpBytes = new byte[start.Length + end.Length];
+            byte[] tmpBytes = new byte[BytesBeforeSegment.Length + BytesAfterSegment.Length];
 
-            start.CopyTo(tmpBytes, 0);
-            end.CopyTo(tmpBytes, start.Length);
+            BytesBeforeSegment.CopyTo(tmpBytes, 0);
+            BytesAfterSegment.CopyTo(tmpBytes, BytesBeforeSegment.Length);
 
             FileBytes = tmpBytes;
 
             int removedSegmentTotalLength = Segments[index].SegmentEndByteIndexInFile - Segments[index].SegmentStartByteIndexInFile;
 
-            DeletedSegments.Add(Segments[index]);
+            RemovedSegments.Add(Segments[index]);
             Segments.RemoveAt(index);
 
             for (int i = index; i < Segments.Count; i++)
@@ -54,31 +70,99 @@ namespace JPEGexplorer.Models
             }
 
             Modified = true;
+            ChangesHistory.Add(new Change() { TypeOfChange = ChangeType.SegmentRemoval, UndoAction = UndoLastSegmentRemoval });
         }
 
-        public void UndoLastSegmentRemoval()
+        private void UndoLastSegmentRemoval()
         {
-            if (!DeletedSegments.Any())
+            if (!RemovedSegments.Any())
                 return;
 
-            int addedSegmentTotalLength = DeletedSegments.Last().SegmentEndByteIndexInFile - DeletedSegments.Last().SegmentStartByteIndexInFile;
-            Segments.Insert(DeletedSegments.Last().SegmentIndexInFile, DeletedSegments.Last());
+            int addedSegmentTotalLength = RemovedSegments.Last().SegmentEndByteIndexInFile - RemovedSegments.Last().SegmentStartByteIndexInFile;
+            Segments.Insert(RemovedSegments.Last().SegmentIndexInFile, RemovedSegments.Last());
 
             byte[] newBytes = new byte[FileBytes.Length + addedSegmentTotalLength];
 
-            FileBytes.Take(DeletedSegments.Last().SegmentStartByteIndexInFile).ToArray().CopyTo(newBytes, 0);
-            DeletedSegments.Last().Content.CopyTo(newBytes, DeletedSegments.Last().SegmentStartByteIndexInFile);
-            FileBytes.Skip(DeletedSegments.Last().SegmentStartByteIndexInFile).ToArray().CopyTo(newBytes, DeletedSegments.Last().SegmentEndByteIndexInFile);
+            FileBytes.Take(RemovedSegments.Last().SegmentStartByteIndexInFile).ToArray().CopyTo(newBytes, 0);
+            RemovedSegments.Last().Content.CopyTo(newBytes, RemovedSegments.Last().SegmentStartByteIndexInFile);
+            FileBytes.Skip(RemovedSegments.Last().SegmentStartByteIndexInFile).ToArray().CopyTo(newBytes, RemovedSegments.Last().SegmentEndByteIndexInFile);
             FileBytes = newBytes;
 
-            for (int i = DeletedSegments.Last().SegmentIndexInFile; i < Segments.Count; i++)
+            for (int i = RemovedSegments.Last().SegmentIndexInFile; i < Segments.Count; i++)
             {
                 Segments[i].SegmentStartByteIndexInFile += addedSegmentTotalLength;
                 Segments[i].SegmentEndByteIndexInFile += addedSegmentTotalLength;
                 Segments[i].SegmentIndexInFile++;
             }
 
-            DeletedSegments.RemoveAt(DeletedSegments.Count - 1);
+            RemovedSegments.RemoveAt(RemovedSegments.Count - 1);
+        }
+
+        public void RemoveExcessBytesAfterSegment(int index)
+        {
+            if (index > Segments.Count)
+                return;
+
+            int numberOfExcessBytes = Segments[index].ExcessBytesAfterSegment;
+            int segmentEndByteIndexInFile = Segments[index].SegmentEndByteIndexInFile;
+
+            byte[] removedBytes = FileBytes.Skip(segmentEndByteIndexInFile).Take(numberOfExcessBytes).ToArray();
+            byte[] tmpBytes = new byte[FileBytes.Length - numberOfExcessBytes];
+
+            FileBytes.Take(segmentEndByteIndexInFile).ToArray().CopyTo(tmpBytes, 0);
+            FileBytes.Skip(segmentEndByteIndexInFile + numberOfExcessBytes).ToArray().CopyTo(tmpBytes, segmentEndByteIndexInFile);
+
+            FileBytes = tmpBytes;
+            Segments[index].ExcessBytesAfterSegment = 0;
+            RemovedSegments.Add(new Segment()
+            {
+                Length = numberOfExcessBytes,
+                Content = removedBytes,
+                SegmentStartByteIndexInFile = segmentEndByteIndexInFile,
+                SegmentEndByteIndexInFile = segmentEndByteIndexInFile + numberOfExcessBytes,
+                SegmentIndexInFile = index
+            });
+
+            for (int i = index + 1; i < Segments.Count; i++)
+            {
+                Segments[i].SegmentStartByteIndexInFile -= numberOfExcessBytes;
+                Segments[i].SegmentEndByteIndexInFile -= numberOfExcessBytes;
+            }
+
+            Modified = true;
+            ChangesHistory.Add(new Change() { TypeOfChange = ChangeType.ExcessBytesRemoval, UndoAction = UndoLastExcessBytesAfterSegmentRemoval });
+        }
+
+        private void UndoLastExcessBytesAfterSegmentRemoval()
+        {
+            Segment restoredSegment = RemovedSegments.Last();
+
+            byte[] tmpBytes = new byte[FileBytes.Length + restoredSegment.Length];
+            FileBytes.Take(restoredSegment.SegmentStartByteIndexInFile).ToArray().CopyTo(tmpBytes, 0);
+            restoredSegment.Content.CopyTo(tmpBytes, restoredSegment.SegmentStartByteIndexInFile);
+            FileBytes.Skip(restoredSegment.SegmentStartByteIndexInFile).ToArray().CopyTo(tmpBytes, restoredSegment.SegmentEndByteIndexInFile);
+            FileBytes = tmpBytes;
+
+            Segments[restoredSegment.SegmentIndexInFile].ExcessBytesAfterSegment = restoredSegment.Length;
+
+            for (int i = restoredSegment.SegmentIndexInFile + 1; i < Segments.Count; i++)
+            {
+                Segments[i].SegmentStartByteIndexInFile += restoredSegment.Length;
+                Segments[i].SegmentEndByteIndexInFile += restoredSegment.Length;
+            }
+
+            RemovedSegments.RemoveAt(RemovedSegments.Count - 1);
+        }
+
+        public void UndoLastChange()
+        {
+            ChangesHistory.Last().UndoAction();
+            ChangesHistory.RemoveAt(ChangesHistory.Count - 1);
+
+            if (ChangesHistory.Count == 0)
+            {
+                Modified = false;
+            }
         }
     }
 }

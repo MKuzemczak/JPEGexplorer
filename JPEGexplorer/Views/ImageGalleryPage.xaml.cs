@@ -70,7 +70,6 @@ namespace JPEGexplorer.Views
 
             var selected = senderObject.SelectedItem as ImageItem;
 
-            //ImagesNavigationHelper.AddImageId(ImageGallerySelectedIdKey, selected.ID);
             NavigationService.Frame.SetListDataItemForNextConnectedAnimation(selected);
             NavigationService.Navigate<ImageGalleryDetailPage>(selected);
         }
