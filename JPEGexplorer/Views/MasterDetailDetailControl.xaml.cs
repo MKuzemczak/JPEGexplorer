@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using JPEGexplorer.Core.Models;
 using JPEGexplorer.Models;
 using JPEGexplorer.Services;
+using JPEGExplorer.FFT;
 
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -66,10 +67,10 @@ namespace JPEGexplorer.Views
                 Console.WriteLine($"Excepion thrown while reading file segments: {e}");
             }
 
-            UpdateDisplayedMetadataSegments(file);
+            await UpdateDisplayedMetadataSegments(file);
         }
 
-        public void UpdateDisplayedMetadataSegments(JPEGByteFile file)
+        public async Task UpdateDisplayedMetadataSegments(JPEGByteFile file)
         {
             SourceByteFile = file;
 
@@ -93,9 +94,11 @@ namespace JPEGexplorer.Views
                 };
                 block.Children.Add(content);
 
-                StackPanel buttons = new StackPanel();
-                buttons.Orientation = Orientation.Horizontal;
-                buttons.Spacing = 20;
+                StackPanel buttons = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Spacing = 20
+                };
 
                 if (s.ExcessBytesAfterSegment > 0)
                 {
@@ -128,22 +131,48 @@ namespace JPEGexplorer.Views
 
                 segmentCntr++;
             }
+
+
+
+            FFT ImgFFT = new FFT(file.File);
+            await ImgFFT.ReadImage();
+            ImgFFT.ForwardFFT();// Finding 2D FFT of Image
+            ImgFFT.FFTShift();
+            await ImgFFT.FFTPlotAsync(ImgFFT.FFTShifted);
+
+            TextBlock magnitudeTitle = new TextBlock
+            {
+                Text = "Fourier transform magnitude",
+                Style = (Style)Application.Current.Resources["DetailSubTitleStyle"],
+                Margin = (Thickness)Application.Current.Resources["SmallTopMargin"]
+            };
+            block.Children.Add(magnitudeTitle);
+            block.Children.Add(new Image() { Source = ImgFFT.FourierPlot });
+
+            TextBlock phaseTitle = new TextBlock
+            {
+                Text = "Fourier transform phase",
+                Style = (Style)Application.Current.Resources["DetailSubTitleStyle"],
+                Margin = (Thickness)Application.Current.Resources["SmallTopMargin"]
+            };
+            block.Children.Add(phaseTitle);
+            block.Children.Add(new Image() { Source = ImgFFT.PhasePlot });
         }
 
-        private void RemoveSegmentButton_Click(object sender, RoutedEventArgs e)
+        private async void RemoveSegmentButton_Click(object sender, RoutedEventArgs e)
         {
             int index = int.Parse(((sender as Button).Tag as string).Split('-').Last());
 
             SourceByteFile.RemoveSegment(index);
-            UpdateDisplayedMetadataSegments(SourceByteFile);
+            await UpdateDisplayedMetadataSegments(SourceByteFile);
         }
 
-        private void RemoveExcessBytesAfterSegmentButton_Click(object sender, RoutedEventArgs e)
+        private async void RemoveExcessBytesAfterSegmentButton_Click(object sender, RoutedEventArgs e)
         {
             int index = int.Parse(((sender as Button).Tag as string).Split('-').Last());
 
             SourceByteFile.RemoveExcessBytesAfterSegment(index);
-            UpdateDisplayedMetadataSegments(SourceByteFile);
+            await UpdateDisplayedMetadataSegments(SourceByteFile);
         }
 
         private static void OnSourceImagePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -167,10 +196,10 @@ namespace JPEGexplorer.Views
             }
         }
 
-        private void UndoLastChangeButton_Click(object sender, RoutedEventArgs e)
+        private async void UndoLastChangeButton_Click(object sender, RoutedEventArgs e)
         {
             SourceByteFile?.UndoLastChange();
-            UpdateDisplayedMetadataSegments(SourceByteFile);
+            await UpdateDisplayedMetadataSegments(SourceByteFile);
         }
     }
 }

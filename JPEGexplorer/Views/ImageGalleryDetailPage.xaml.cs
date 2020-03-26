@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using JPEGexplorer.Models;
 using JPEGexplorer.Services;
 using JPEGexplorer.Helpers;
+using JPEGExplorer.FFT;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
@@ -45,7 +46,7 @@ namespace JPEGexplorer.Views
             Source.Clear();
 
             Source.Add(e.Parameter as ImageItem);
-            
+
             // TODO WTS: Replace this with your actual data
             //var data = await SampleDataService.GetImageGalleryDataAsync("ms-appx:///Assets");
 

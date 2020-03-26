@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Streams;
+using System.IO;
 
 namespace JPEGexplorer.Models
 {
@@ -36,8 +40,7 @@ namespace JPEGexplorer.Models
                 return;
             if (ImageData == null)
                 ImageData = new BitmapImage();
-            using (Windows.Storage.Streams.IRandomAccessStream fileStream =
-                await File.OpenAsync(Windows.Storage.FileAccessMode.Read))
+            using (IRandomAccessStream fileStream = await File.OpenAsync(FileAccessMode.Read))
             {
                 await ImageData.SetSourceAsync(fileStream);
             }
@@ -93,8 +96,7 @@ namespace JPEGexplorer.Models
 
             if (options == Options.Image)
             {
-                using (Windows.Storage.Streams.IRandomAccessStream fileStream =
-                await f.OpenAsync(Windows.Storage.FileAccessMode.Read))
+                using (IRandomAccessStream fileStream = await f.OpenAsync(FileAccessMode.Read))
                 {
                     img.SetSource(fileStream);
                 }
@@ -114,6 +116,15 @@ namespace JPEGexplorer.Models
         public async static Task<ImageItem> FromStorageFile(StorageFile f, int index, Options options = Options.Image)
         {
             return await FromStorageFile(f, index, new CancellationToken(), options);
+        }
+
+        public async Task<Bitmap> GetBitmap()
+        {
+            using (IRandomAccessStream fileStream = await File.OpenAsync(FileAccessMode.Read))
+            {
+                Bitmap bmp = new Bitmap(fileStream.AsStream());
+                return bmp;
+            }
         }
     }
 }
