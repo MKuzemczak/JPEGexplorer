@@ -59,39 +59,6 @@ namespace JPEGExplorer.FFT
         public COMPLEX[,] Output;        // FFT Normal
         public COMPLEX[,] FFTNormal;     // FFT Shift Removed - required for Inverse FFT 
 
-        ///// <summary>
-        ///// Parameterized Constructor for FFT Reads Input Bitmap to a Greyscale Array
-        ///// </summary>
-        ///// <param name="Input">Input Image</param>
-        //public FFT(BitmapImage Input)
-        //{
-        //    Obj = Input;
-        //    Width = nx = Input.PixelWidth;
-        //    Height = ny = Input.PixelHeight;
-        //    ReadImage();
-        //}
-        ///// <summary>
-        ///// Parameterized Constructor for FFT
-        ///// </summary>
-        ///// <param name="Input">Greyscale Array</param>
-        //public FFT(int[,] Input)
-        //{
-        //    GreyImage = Input;
-        //    Width = nx = Input.GetLength(0);
-        //    Height = ny = Input.GetLength(1);
-        //}
-        ///// <summary>
-        ///// Constructor for Inverse FFT
-        ///// </summary>
-        ///// <param name="Input"></param>
-        //public FFT(COMPLEX[,] Input)
-        //{
-        //    nx = Width = Input.GetLength(0);
-        //    ny = Height = Input.GetLength(1);
-        //    Fourier = Input;
-
-        //}
-
         public FFT(StorageFile File)
         {
             SourceFile = File;
@@ -135,62 +102,8 @@ namespace JPEGExplorer.FFT
 
             nx = Width = ny = Height = powerOfTwo;
             return;
-            //Bitmap image = Obj;
-            //BitmapData bitmapData1 = image.LockBits(new Rectangle(0, 0, image.Width, image.Height),
-            //                         ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            //unsafe
-            //{
-            //    byte* imagePointer1 = (byte*)bitmapData1.Scan0;
-
-            //    for (i = 0; i < bitmapData1.Height; i++)
-            //    {
-            //        for (j = 0; j < bitmapData1.Width; j++)
-            //        {
-            //            GreyImage[j, i] = (int)((imagePointer1[0] + imagePointer1[1] + imagePointer1[2]) / 3.0);
-            //            //4 bytes per pixel
-            //            imagePointer1 += 4;
-            //        }//end for j
-            //        //4 bytes per pixel
-            //        imagePointer1 += bitmapData1.Stride - (bitmapData1.Width * 4);
-            //    }//end for i
-            //}//end unsafe
-            //image.UnlockBits(bitmapData1);
-            //return;
         }
-        public BitmapImage Displayimage()
-        {
 
-
-            //int i, j;
-            //Bitmap image = new Bitmap(Width, Height);
-            //BitmapData bitmapData1 = image.LockBits(new Rectangle(0, 0, Width, Height),
-            //                         ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            //unsafe
-            //{
-
-            //    byte* imagePointer1 = (byte*)bitmapData1.Scan0;
-
-            //    for (i = 0; i < bitmapData1.Height; i++)
-            //    {
-            //        for (j = 0; j < bitmapData1.Width; j++)
-            //        {
-            //            // write the logic implementation here
-            //            imagePointer1[0] = (byte)GreyImage[j, i];
-            //            imagePointer1[1] = (byte)GreyImage[j, i];
-            //            imagePointer1[2] = (byte)GreyImage[j, i];
-            //            imagePointer1[3] = (byte)255;
-            //            //4 bytes per pixel
-            //            imagePointer1 += 4;
-            //        }//end for j
-
-            //        //4 bytes per pixel
-            //        imagePointer1 += (bitmapData1.Stride - (bitmapData1.Width * 4));
-            //    }//end for i
-            //}//end unsafe
-            //image.UnlockBits(bitmapData1);
-            //return image;// col;
-            return new BitmapImage();
-        }
         public async Task<BitmapImage> Displayimage(int[,] image)
         {
             byte[] pixelBytes = new byte[image.Length * 4];
@@ -217,32 +130,6 @@ namespace JPEGExplorer.FFT
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.SetSource(inMemoryRandomAccessStream);
             return bitmapImage;
-
-            //int i, j;
-            //Bitmap output = new Bitmap(image.GetLength(0), image.GetLength(1));
-            //BitmapData bitmapData1 = output.LockBits(new Rectangle(0, 0, image.GetLength(0), image.GetLength(1)),
-            //                         ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            //unsafe
-            //{
-            //    byte* imagePointer1 = (byte*)bitmapData1.Scan0;
-            //    for (i = 0; i < bitmapData1.Height; i++)
-            //    {
-            //        for (j = 0; j < bitmapData1.Width; j++)
-            //        {
-            //            imagePointer1[0] = (byte)image[j, i];
-            //            imagePointer1[1] = (byte)image[j, i];
-            //            imagePointer1[2] = (byte)image[j, i];
-            //            imagePointer1[3] = 255;
-            //            //4 bytes per pixel
-            //            imagePointer1 += 4;
-            //        }//end for j
-            //        //4 bytes per pixel
-            //        imagePointer1 += (bitmapData1.Stride - (bitmapData1.Width * 4));
-            //    }//end for i
-            //}//end unsafe
-            //output.UnlockBits(bitmapData1);
-            //return output;// col;
-
         }
         /// <summary>
         /// Calculate Fast Fourier Transform of Input Image

@@ -46,28 +46,6 @@ namespace JPEGexplorer.Views
             Source.Clear();
 
             Source.Add(e.Parameter as ImageItem);
-
-            // TODO WTS: Replace this with your actual data
-            //var data = await SampleDataService.GetImageGalleryDataAsync("ms-appx:///Assets");
-
-            //foreach (var item in data)
-            //{
-            //    Source.Add(item);
-            //}
-
-            //var selectedImageID = e.Parameter as string;
-            //if (!string.IsNullOrEmpty(selectedImageID) && e.NavigationMode == NavigationMode.New)
-            //{
-            //    SelectedImage = Source.FirstOrDefault(i => i.ID == selectedImageID);
-            //}
-            //else
-            //{
-            //    selectedImageID = ImagesNavigationHelper.GetImageId(ImageGalleryPage.ImageGallerySelectedIdKey);
-            //    if (!string.IsNullOrEmpty(selectedImageID))
-            //    {
-            //        SelectedImage = Source.FirstOrDefault(i => i.ID == selectedImageID);
-            //    }
-            //}
         }
 
         protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)

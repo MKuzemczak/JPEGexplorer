@@ -4,7 +4,6 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 
-using JPEGexplorer.Core.Models;
 using JPEGexplorer.Models;
 using JPEGexplorer.Services;
 using JPEGExplorer.FFT;
@@ -23,20 +22,10 @@ namespace JPEGexplorer.Views
             set { SetValue(SourceImageProperty, value); }
         }
 
-        public SampleOrder MasterMenuItem
-        {
-            get { return GetValue(MasterMenuItemProperty) as SampleOrder; }
-            set { SetValue(MasterMenuItemProperty, value); }
-        }
-
         public static readonly DependencyProperty SourceImageProperty = DependencyProperty.Register("SourceImage",
-            typeof(SampleImage),
+            typeof(ImageItem),
             typeof(MasterDetailDetailControl),
             new PropertyMetadata(null, OnSourceImagePropertyChanged));
-        public static readonly DependencyProperty MasterMenuItemProperty = DependencyProperty.Register("MasterMenuItem",
-            typeof(SampleOrder),
-            typeof(MasterDetailDetailControl),
-            new PropertyMetadata(null, OnMasterMenuItemPropertyChanged));
 
         public JPEGByteFile SourceByteFile { get; set; }
 
@@ -133,6 +122,13 @@ namespace JPEGexplorer.Views
 
                 if (s.Removable)
                 {
+                    TextBlock t0 = new TextBlock()
+                    {
+                        Text = "Content:",
+                        Padding = new Thickness(0, 5, 0, 3)
+                    };
+                    block.Children.Add(t0);
+
                     TextBlock t = new TextBlock()
                     {
                         Text = Encoding.ASCII.GetString(s.Content),
