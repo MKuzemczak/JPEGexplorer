@@ -73,6 +73,7 @@ namespace JPEGexplorer.Views
 
         public async Task UpdateDisplayedMetadataSegments(JPEGByteFile file)
         {
+            loadingTextBlock.Visibility = Visibility.Visible;
             SourceByteFile = file;
 
             ClearBlockChildren();
@@ -142,6 +143,7 @@ namespace JPEGexplorer.Views
                 }
 
                 segmentCntr++;
+
             }
 
             FFT ImgFFT = new FFT(file.File);
@@ -167,6 +169,8 @@ namespace JPEGexplorer.Views
             };
             block.Children.Add(phaseTitle);
             block.Children.Add(new Image() { Source = ImgFFT.PhasePlot });
+
+            loadingTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private async void RemoveSegmentButton_Click(object sender, RoutedEventArgs e)
