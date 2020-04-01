@@ -211,7 +211,7 @@ namespace JPEGExplorer.FFT
             }
 
             InMemoryRandomAccessStream inMemoryRandomAccessStream = new InMemoryRandomAccessStream();
-            BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, inMemoryRandomAccessStream);
+            BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.BmpEncoderId, inMemoryRandomAccessStream);
             encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, (uint)width, (uint)height, 96.0, 96.0, pixelBytes);
             await encoder.FlushAsync();
             BitmapImage bitmapImage = new BitmapImage();

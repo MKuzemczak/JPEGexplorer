@@ -11,6 +11,7 @@ using JPEGExplorer.FFT;
 
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using System.Text;
 
 namespace JPEGexplorer.Views
 {
@@ -129,10 +130,19 @@ namespace JPEGexplorer.Views
                     block.Children.Add(buttons);
                 }
 
+                if (s.Removable)
+                {
+                    TextBlock t = new TextBlock()
+                    {
+                        Text = Encoding.ASCII.GetString(s.Content),
+                        TextWrapping = TextWrapping.Wrap
+                    };
+
+                    block.Children.Add(t);
+                }
+
                 segmentCntr++;
             }
-
-
 
             FFT ImgFFT = new FFT(file.File);
             await ImgFFT.ReadImage();

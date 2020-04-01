@@ -130,7 +130,44 @@ namespace JPEGexplorer.Services
 
                 try
                 {
-                    segment.Content = fileBytes.Skip(cntr - 4).Take(segmentDataLength + 2).ToArray();
+                    byte[] rawBytes = fileBytes.Skip(cntr - 4).Take(segmentDataLength + 2).ToArray();
+                    byte[] midBytes = new byte[rawBytes.Length];
+                    int startPivot = 0, endPivot = 0, midBytesPivot = 0, minReadableTextLength = 8;
+                    byte minAscii = 0x20, maxAscii = 0x7f;
+
+                    while (endPivot < rawBytes.Length)
+                    {
+                        byte currentEndPivotByte = rawBytes[endPivot], currentStartPivotByte = rawBytes[startPivot];
+                        if (currentEndPivotByte >= minAscii && currentEndPivotByte < maxAscii)
+                        {
+                            endPivot++;
+                            continue;
+                        }
+
+                        if (endPivot - startPivot > minReadableTextLength)
+                        {
+                            while (startPivot < endPivot)
+                            {
+                                midBytes[midBytesPivot++] = rawBytes[startPivot++];
+                            }
+                        }
+                        else
+                        {
+                            startPivot = endPivot;
+                        }
+
+                        if (midBytesPivot > 0 && midBytes[midBytesPivot - 1] != (byte)'\n')
+                        {
+                            midBytes[midBytesPivot++] = (byte)'\n';
+                        }
+
+                        startPivot = ++endPivot;
+                    }
+
+                    byte[] resultBytes = new byte[midBytesPivot];
+                    midBytes.Take(midBytesPivot).ToArray().CopyTo(resultBytes, 0);
+                    segment.Content = resultBytes;
+
                 }
                 catch (Exception e)
                 {

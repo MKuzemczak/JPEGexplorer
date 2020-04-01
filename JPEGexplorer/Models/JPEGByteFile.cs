@@ -156,6 +156,9 @@ namespace JPEGexplorer.Models
 
         public void UndoLastChange()
         {
+            if (ChangesHistory.Count == 0)
+                return;
+
             ChangesHistory.Last().UndoAction();
             ChangesHistory.RemoveAt(ChangesHistory.Count - 1);
 
