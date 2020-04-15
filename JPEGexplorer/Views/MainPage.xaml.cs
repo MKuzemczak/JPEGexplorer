@@ -21,6 +21,7 @@ namespace JPEGexplorer.Views
 
         private async Task ImageGalleryPage_ImageSelected(object sender, ImageSelectedEventArgs e)
         {
+            splitView.IsPaneOpen = true;
             await detailControl.HandleSelectedImage(e.SelectedImage);
         }
 

@@ -15,11 +15,12 @@
             Style="{StaticResource PageTitleStyle}"/>
         <Grid
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <SplitView IsPaneOpen="True"
+            <SplitView x:Name="splitView"
+                IsPaneOpen="False"
                 DisplayMode="Inline"
                 OpenPaneLength="600"
                 PanePlacement="Right">
-                
+
                 <SplitView.Pane>
                     <views:MasterDetailDetailControl x:Name="detailControl"/>
                 </SplitView.Pane>
@@ -27,12 +28,8 @@
                     <views:ImageGalleryPage
                         ImageSelected="ImageGalleryPage_ImageSelected"/>
                 </Grid>
-                
+
             </SplitView>
-            <!--
-                The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
-                Place your content here.
-            -->
         </Grid>
     </Grid>
 </Page>
