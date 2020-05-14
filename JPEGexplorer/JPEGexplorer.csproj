@@ -142,6 +142,7 @@
     <Compile Include="Helpers\MenuNavigationHelper.cs" />
     <Compile Include="Helpers\MetadataManagementHelper.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
+    <Compile Include="RSA\RSA.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Activation\DefaultActivationHandler.cs" />
     <Compile Include="Services\MetadataExtractorService.cs" />
