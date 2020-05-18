@@ -47,7 +47,7 @@ namespace JPEGexplorer.RSA
                 return liczba1;
             }
 
-            private static long[] ZnajdzWykladnikPublicznyiPrywatny(long p, long q)
+            public static long[] ZnajdzWykladnikPublicznyiPrywatny(long p, long q)
             {
                 long[] wykladniki = new long[2];
                 long phi = (p - 1) * (q - 1);
