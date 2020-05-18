@@ -8,7 +8,7 @@ namespace JPEGexplorer.RSA
 {
         public class RSA
         {
-            public static long LosujKlucze(long a = 1152921504606846976, long b = long.MaxValue)
+            private static long LosujKlucze(long a = 1152921504606846976, long b = long.MaxValue)
             {
                 Random random = new Random();
                 
@@ -19,7 +19,7 @@ namespace JPEGexplorer.RSA
                 return a;
             }
 
-            public static bool czy_pierwsza(long n)
+            private static bool czy_pierwsza(long n)
             {
                 if (n < 2)
                     return false; //gdy liczba jest mniejsza niż 2 to nie jest pierwszą
@@ -30,7 +30,7 @@ namespace JPEGexplorer.RSA
                 return true;
             }
 
-            public static long NWD(long liczba1, long liczba2)
+            private static long NWD(long liczba1, long liczba2)
             {/*
             while (liczba1 != liczba2)
                 if (liczba1 < liczba2) liczba2 -= liczba1; else liczba1 -= liczba2; 
@@ -47,7 +47,7 @@ namespace JPEGexplorer.RSA
                 return liczba1;
             }
 
-            public static long[] ZnajdzWykladnikPublicznyiPrywatny(long p, long q)
+            private static long[] ZnajdzWykladnikPublicznyiPrywatny(long p, long q)
             {
                 long[] wykladniki = new long[2];
                 long phi = (p - 1) * (q - 1);
@@ -65,7 +65,7 @@ namespace JPEGexplorer.RSA
                 return wykladniki;
             }
 
-            public static long Odwr_mod(long a, long n)
+            private static long Odwr_mod(long a, long n)
             {
                 long a0, n0, p0, p1, q, r, t;
 
@@ -87,7 +87,7 @@ namespace JPEGexplorer.RSA
                 return p1;
             }
 
-            public static long PotegaModul(long wiadomosc, long wykladnikPubliczny, long modul)
+            private static long PotegaModul(long wiadomosc, long wykladnikPubliczny, long modul)
             {
                 long pot, wyn, q;
                 pot = wiadomosc; wyn = 1;
