@@ -133,6 +133,17 @@ namespace JPEGexplorer.RSA
 
                 return returned;
             }
+
+            public static byte[] Decode(long[] coded, long wykladnikPrywatny, long modul)
+            {
+                byte[] decoded = new byte[coded.Length];
+
+                for (int i = 0; i < coded.Length; i++)
+                {
+                    decoded[i] = Convert.ToByte(PotegaModul(coded[i], wykladnikPrywatny, modul));
+                }
+                return decoded;
+            }
         }
     }
 
