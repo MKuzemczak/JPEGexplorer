@@ -161,6 +161,7 @@
     <Compile Include="Models\ItemIndexRangeList.cs" />
     <Compile Include="Models\JPEGByteFile.cs" />
     <Compile Include="Models\Segment.cs" />
+    <Compile Include="RSA\RSA.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Activation\DefaultActivationHandler.cs" />
     <Compile Include="Services\ImageLoaderService.cs" />
