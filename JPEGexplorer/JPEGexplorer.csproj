@@ -148,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activation\ActivationHandler.cs" />
-    <Compile Include="FFT\FFT.cs" />
+    <Compile Include="FFT\FFTService.cs" />
     <Compile Include="Helpers\ImageSelectedEventArgs.cs" />
     <Compile Include="Helpers\ImagesNavigationHelper.cs" />
     <Compile Include="Helpers\MenuNavigationHelper.cs" />

@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource PageStyle}"
-    xmlns:models="using:JPEGexplorer.Core.Models"
+    xmlns:models="using:JPEGexplorer.Models"
     xmlns:views="using:JPEGexplorer.Views"
     mc:Ignorable="d">
     <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
@@ -27,6 +27,9 @@
                 <Grid>
                     <views:ImageGalleryPage
                         ImageSelected="ImageGalleryPage_ImageSelected"/>
+                    <Button Content="Hehe" Click="Button_Click"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"/>
                 </Grid>
 
             </SplitView>

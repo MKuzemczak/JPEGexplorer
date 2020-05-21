@@ -14,7 +14,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.Storage.FileProperties;
 
-namespace JPEGExplorer.FFT
+namespace JPEGexplorer.FFT
 {
     /// <summary>
     /// Defining Structure for Complex Data type  N=R+Ii
@@ -37,7 +37,7 @@ namespace JPEGExplorer.FFT
         }
     }
 
-    class FFT
+    class FFTService
     {
         public StorageFile SourceFile;
         public BitmapImage Obj;               // Input Object Image
@@ -59,7 +59,7 @@ namespace JPEGExplorer.FFT
         public COMPLEX[,] Output;        // FFT Normal
         public COMPLEX[,] FFTNormal;     // FFT Shift Removed - required for Inverse FFT 
 
-        public FFT(StorageFile File)
+        public FFTService(StorageFile File)
         {
             SourceFile = File;
         }

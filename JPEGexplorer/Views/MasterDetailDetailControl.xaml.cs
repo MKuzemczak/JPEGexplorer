@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using JPEGexplorer.Models;
 using JPEGexplorer.Services;
-using JPEGExplorer.FFT;
+using JPEGexplorer.FFT;
 
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -142,7 +142,7 @@ namespace JPEGexplorer.Views
 
             }
 
-            FFT ImgFFT = new FFT(file.File);
+            FFTService ImgFFT = new FFTService(file.File);
             await ImgFFT.ReadImage();
             ImgFFT.ForwardFFT();// Finding 2D FFT of Image
             ImgFFT.FFTShift();

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using JPEGexplorer.Models;
 using JPEGexplorer.Services;
 using JPEGexplorer.Helpers;
-using JPEGExplorer.FFT;
+using JPEGexplorer.FFT;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
