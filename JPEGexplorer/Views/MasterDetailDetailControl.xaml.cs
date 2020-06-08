@@ -211,5 +211,22 @@ namespace JPEGexplorer.Views
             SourceByteFile?.UndoLastChange();
             await UpdateDisplayedMetadataSegments(SourceByteFile);
         }
+
+        private async void EncodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            loadingTextBlock.Visibility = Visibility.Visible;
+            await Task.Delay(100);
+            SourceByteFile?.EncodeRSA();
+            loadingTextBlock.Visibility = Visibility.Collapsed;
+        }
+
+        private async void DecodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            loadingTextBlock.Visibility = Visibility.Visible;
+            await Task.Delay(100);
+            SourceByteFile?.DecodeRSA();
+            loadingTextBlock.Visibility = Visibility.Collapsed;
+        }
+
     }
 }

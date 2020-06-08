@@ -151,6 +151,7 @@
     <Compile Include="FFT\FFTService.cs" />
     <Compile Include="Helpers\ImageSelectedEventArgs.cs" />
     <Compile Include="Helpers\ImagesNavigationHelper.cs" />
+    <Compile Include="Helpers\JPEGResources.cs" />
     <Compile Include="Helpers\MenuNavigationHelper.cs" />
     <Compile Include="Helpers\MetadataManagementHelper.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />

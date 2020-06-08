@@ -7,6 +7,9 @@ using System.IO;
 
 using Windows.Storage;
 
+using JPEGexplorer.Helpers;
+using JPEGexplorer.RSA;
+
 namespace JPEGexplorer.Models
 {
     public class JPEGByteFile
@@ -166,6 +169,58 @@ namespace JPEGexplorer.Models
             {
                 Modified = false;
             }
+        }
+
+        public async Task EncodeRSA()
+        {
+            var segment = Segments.Find(i => i.Name == JPEGResources.SegmentNameDictionary[0xDA]);
+
+            byte[] bytes = FileBytes.Take(segment.SegmentEndByteIndexInFile - 2).Skip(segment.SegmentStartByteIndexInFile + 20).ToArray();
+            long p = 10007;
+            long q = 10009;
+            var keys = RSAService.ZnajdzWykladnikPublicznyiPrywatny(p, q);
+
+            var result = RSAService.Encode(bytes, keys[0], p * q);
+
+            int takeSkip = segment.SegmentEndByteIndexInFile - 2 - segment.SegmentStartByteIndexInFile - 20;
+            result.Take(takeSkip)
+                .ToArray()
+                .CopyTo(FileBytes, segment.SegmentStartByteIndexInFile + 20);
+            var newFileBytes = new byte[FileBytes.Length + result.Length - takeSkip];
+            FileBytes.CopyTo(newFileBytes, 0);
+            result.Skip(takeSkip).ToArray().CopyTo(newFileBytes, FileBytes.Length);
+            FileBytes = newFileBytes;
+            Modified = true;
+            await SaveFile();
+        }
+
+        public async Task DecodeRSA()
+        {
+            var segment = Segments.Find(i => i.Name == JPEGResources.SegmentNameDictionary[0xDA]);
+
+            byte[] bytes = FileBytes.Take(segment.SegmentEndByteIndexInFile - 2).Skip(segment.SegmentStartByteIndexInFile + 20).ToArray();
+            int excessBytes = bytes.Length * 8 - bytes.Length;
+            byte[] newBytes = new byte[bytes.Length * 8];
+            bytes.CopyTo(newBytes, 0);
+            FileBytes.Skip(FileBytes.Length - excessBytes).ToArray().CopyTo(newBytes, bytes.Length);
+            long p = 10007;
+            long q = 10009;
+
+            var keys = RSAService.ZnajdzWykladnikPublicznyiPrywatny(p, q);
+
+            var result = RSAService.Decode(newBytes, keys[1], p * q);
+
+            result.CopyTo(FileBytes, segment.SegmentStartByteIndexInFile + 20);
+            byte[] newFileBytes = new byte[FileBytes.Length - excessBytes];
+            FileBytes.Take(FileBytes.Length - excessBytes).ToArray().CopyTo(newFileBytes, 0);
+            FileBytes = newFileBytes;
+            Modified = true;
+            await SaveFile();
+        }
+
+        public void EncodeRSABuiltin()
+        {
+
         }
     }
 }

@@ -27,6 +27,8 @@
                 <StackPanel Orientation="Horizontal" Spacing="20">
                     <Button x:Name="saveChangesButton" Content="Save changes" Click="SaveChangesButton_Click"/>
                     <Button x:Name="undoLastChangeButton" Content="Undo" Click="UndoLastChangeButton_Click"/>
+                    <Button x:Name="encodeButton" Content="Encode" Click="EncodeButton_Click" />
+                    <Button x:Name="decodeButton" Content="Decode" Click="DecodeButton_Click" />
                     <TextBlock x:Name="loadingTextBlock" Text="Loading..." Visibility="Collapsed" Padding="0,7,0,0"/>
                 </StackPanel>
             </StackPanel>
